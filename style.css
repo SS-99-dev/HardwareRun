@@ -24,10 +24,26 @@ li a, .dropbtn {
 }
 
 li a:hover, .dropdown:hover .dropbtn {
+  background-color: blue;
+}
+
+li a:hover, .dropdown1:hover .dropbtn {
+  background-color: green;
+}
+
+li a:hover, .dropdown2:hover .dropbtn {
   background-color: red;
 }
 
 li.dropdown {
+  display: inline-block;
+}
+
+li.dropdown1 {
+  display: inline-block;
+}
+
+li.dropdown2 {
   display: inline-block;
 }
 
@@ -51,5 +67,13 @@ li.dropdown {
 .dropdown-content a:hover {background-color: #f1f1f1;}
 
 .dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown1:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown2:hover .dropdown-content {
   display: block;
 }
