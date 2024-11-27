@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galgenraten</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin: 20px;
+            height: 100vh;
+        }
+
+        .left {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .left img {
+            max-width: 80%;
+            height: auto;
+        }
+
+        .right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: flex-start;
+            margin-left: 20px;
+        }
+
+        .wrong-letters {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .attempts {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .input-area {
+            display: flex;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .input-area input[type="text"] {
+            font-size: 1em;
+            padding: 8px;
+            margin-right: 10px;
+            width: 200px;
+        }
+
+        .input-area button {
+            font-size: 1em;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+
+
+        .message {
+            margin-top: 20px;
+            font-size: 1.4em;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .message.success {
+            color: green;
+        }
+
+        .message.failure {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="left">
+        <img id="hangmanImage" src="gr-0.png" alt="Galgenraten Bild">
+    </div>
+    <div class="right">
+        <div class="wrong-letters">
+            <strong>Falsch geratene Buchstaben:</strong>
+            <div id="wrongLetters"></div>
+        </div>
+        <div class="attempts">
+            Versuche: <span id="attemptsCounter">0/8</span>
+        </div>
+        <div class="input-area">
+            <input type="text" id="letterInput" placeholder="Buchstabe eingeben" maxlength="1">
+            <button onclick="guessLetter()">OK</button>
+        </div>
+        <div class="input-area">
+            <input type="text" id="wordInput" placeholder="Wort zum Raten eingeben">
+            <button onclick="startGame()">OK</button>
+        </div>
+        <button class="reset-button" onclick="resetGame()">Spiel zurücksetzen</button>
+        <div class="message" id="gameMessage"></div>
+    </div>
+
+    <script>
+        let wrongLetters = [];
+        let wordToGuess = "";
+        let correctGuesses = [];
+        let maxAttempts = 8;
+        let attempts = 0;
+
+        function guessLetter() {
+            const letterInput = document.getElementById('letterInput');
+            const letter = letterInput.value.toLowerCase();
+            letterInput.value = "";
+
+            if (!letter || wrongLetters.includes(letter) || correctGuesses.includes(letter)) return;
+
+            if (wordToGuess.includes(letter)) {
+                correctGuesses.push(letter);
+                checkWin();
+            } else {
+                wrongLetters.push(letter);
+                attempts++;
+                updateAttempts();
+                updateHangmanImage();
+                updateWrongLetters();
+                checkLoss();
+            }
+        }
+
+        function startGame() {
+            const wordInput = document.getElementById('wordInput');
+            wordToGuess = wordInput.value.toLowerCase();
+            wordInput.value = "";
+            resetGame(false);
+            document.getElementById('gameMessage').innerText = "";
+        }
+
+        function updateWrongLetters() {
+            document.getElementById('wrongLetters').innerText = wrongLetters.join(', ');
+        }
+
+        function updateHangmanImage() {
+            const image = document.getElementById('hangmanImage');
+            image.src = `gr-${attempts}.png`;
+        }
+
+        function updateAttempts() {
+            const attemptsCounter = document.getElementById('attemptsCounter');
+            attemptsCounter.innerText = `${attempts}/${maxAttempts}`;
+        }
+
+        function checkWin() {
+            const wordSet = new Set(wordToGuess);
+            const correctSet = new Set(correctGuesses);
+
+            if ([...wordSet].every(letter => correctSet.has(letter))) {
+                document.getElementById('gameMessage').innerText = "Herzlichen Glückwunsch, du hast gewonnen!";
+                document.getElementById('gameMessage').className = "message success";
+            }
+        }
+
+        function checkLoss() {
+            if (attempts >= maxAttempts) {
+                document.getElementById('gameMessage').innerText = "Leider verloren! Das Wort war: " + wordToGuess;
+                document.getElementById('gameMessage').className = "message failure";
+            }
+        }
+
+        function resetGame(clearWord = true) {
+            wrongLetters = [];
+            correctGuesses = [];
+            attempts = 0;
+            updateWrongLetters();
+            updateAttempts();
+            updateHangmanImage();
+            document.getElementById('gameMessage').innerText = "";
+            document.getElementById('letterInput').value = "";
+            if (clearWord) {
+                document.getElementById('wordInput').value = "";
+                wordToGuess = "";
+            }
+        }
+    </script>
+</body>
+</html>
