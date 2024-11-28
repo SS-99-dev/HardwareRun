@@ -4,8 +4,6 @@ body {
 }
 
 h1 {
-  text-align: center;
-  margin: 0 auto;
   font-size: 25px;
   position: absolute;
   transform: translate(-50, -50);
